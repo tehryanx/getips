@@ -13,7 +13,7 @@ def get_ip(host):
 	try:
 		return socket.gethostbyname(strip_prot(host)) if re.search("[^0-9.]", host) and re.search("\.", host) else host
 	except:
-		return host
+		return False
 
 def strip_prot(hostname):
 	# remove protocol handler
@@ -21,6 +21,12 @@ def strip_prot(hostname):
 
 hosts = read_in()
 
+addrs = []
+
 for host in hosts:
 	addr = get_ip(host)
-	print(addr)
+	if addr:
+		addrs.append(addr)
+
+for addr in set(list(addrs)):
+	print (addr)
