@@ -35,7 +35,7 @@ if verbose:
 	# if verbose is on then we output each host with its corresponding ip
 	for host_obj in host_objs:
 		for addr in host_obj[2]:
-			print("{} {}".format(host_obj[0], addr))
+			print("{} {}".format(addr, host_obj[0]))
 else:
 	# otherwise we remove dupes and output just a list of ips. 
 	addr_list = []
