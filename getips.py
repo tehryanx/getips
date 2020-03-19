@@ -26,7 +26,10 @@ host_objs = []
 
 for host in hosts:
 	# TODO: This won't do ipv6 so we need a better solution
-	host_objs.append(socket.gethostbyname_ex(strip_prot(host)))
+	try:
+		host_objs.append(socket.gethostbyname_ex(strip_prot(host)))
+	except:
+		continue
 
 if verbose:
 	# if verbose is on then we output each host with its corresponding ip
