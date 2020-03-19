@@ -4,16 +4,17 @@ import sys
 import socket
 import re
 import ipaddress
+import argparse
+
+
+parser = argparse.ArgumentParser(description = "Take hostnames on stdin and return IPs.")
+parser.add_argument('-v', '--verbose', default=False, action="store_true", help="Set this to return both the hostname and ip.")
+args = parser.parse_args()
+verbose = args.verbose
+
 
 def read_in():
 	return [x.strip() for x in sys.stdin.readlines()]
-
-def get_ip(host):
-	# if host contains non-numeric, non-dot chars AND at least one dot then we can assume its a hostname. 
-	try:
-		return socket.gethostbyname(strip_prot(host)) if re.search("[^0-9.]", host) and re.search("\.", host) else host
-	except:
-		return False
 
 def strip_prot(hostname):
 	# remove protocol handler
@@ -21,12 +22,23 @@ def strip_prot(hostname):
 
 hosts = read_in()
 
-addrs = []
+host_objs = []
 
 for host in hosts:
-	addr = get_ip(host)
-	if addr:
-		addrs.append(addr)
+	# TODO: This won't do ipv6 so we need a better solution
+	host_objs.append(socket.gethostbyname_ex(strip_prot(host)))
 
-for addr in set(list(addrs)):
-	print (addr)
+if verbose:
+	# if verbose is on then we output each host with its corresponding ip
+	for host_obj in host_objs:
+		for addr in host_obj[2]:
+			print("{} {}".format(host_obj[0], addr))
+else:
+	# otherwise we remove dupes and output just a list of ips. 
+	addr_list = []
+	for host_obj in host_objs:
+		for addr in host_obj[2]:
+			addr_list.append(addr)
+
+	for i in list(set(addr_list)):
+		print(i)
