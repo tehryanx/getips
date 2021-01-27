@@ -27,20 +27,20 @@ host_objs = []
 for host in hosts:
 	# TODO: This won't do ipv6 so we need a better solution
 	try:
-		host_objs.append(socket.gethostbyname_ex(strip_prot(host)))
+		host_objs.append( [socket.gethostbyname_ex(strip_prot(host)), host] )
 	except:
 		continue
 
 if verbose:
 	# if verbose is on then we output each host with its corresponding ip
 	for host_obj in host_objs:
-		for addr in host_obj[2]:
-			print("{} {}".format(addr, host_obj[0]))
+		for addr in host_obj[0][2]:
+			print("{} {} {}".format(addr, host_obj[0][0], host_obj[1]))
 else:
 	# otherwise we remove dupes and output just a list of ips. 
 	addr_list = []
 	for host_obj in host_objs:
-		for addr in host_obj[2]:
+		for addr in host_obj[0][2]:
 			addr_list.append(addr)
 
 	for i in list(set(addr_list)):
